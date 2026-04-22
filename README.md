@@ -58,6 +58,25 @@ video-pipeline/
 └── token.json               # ← 第一次授權後自動產生（.gitignore）
 ```
 
+## 📱 手機 / 遠端使用（方案 A）
+
+想在手機上觸發？啟動 API 伺服器 + Cloudflare Tunnel，就能在手機瀏覽器送任務：
+
+```powershell
+# 1. 設 token
+$env:VP_TOKEN = "your-long-random-token"
+
+# 2. 啟動 API server
+powershell -ExecutionPolicy Bypass -File run_server.ps1
+
+# 3. 另開視窗：Cloudflare Tunnel（會印出公開 URL）
+cloudflared tunnel --url http://localhost:8000
+```
+
+完整說明見 [docs/mobile_setup.md](docs/mobile_setup.md)。
+
+---
+
 ## 手動使用（不透過 Claude）
 ```bash
 # 1) 編輯 topics/<主題>.json（或複製 kd_indicator.json 改）
