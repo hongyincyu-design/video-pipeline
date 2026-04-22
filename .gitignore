@@ -1,0 +1,25 @@
+# YouTube OAuth credentials (keep private!)
+client_secret.json
+token.json
+
+# Generated output
+output/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp

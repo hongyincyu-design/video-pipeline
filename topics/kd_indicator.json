@@ -1,0 +1,91 @@
+{
+  "title": "KD 技術指標",
+  "subtitle": "XQ 全球贏家 程式撰寫介紹",
+  "voice": "zh-TW-HsiaoChenNeural",
+  "rate": "+10%",
+  "output_name": "KD技術指標_XQ程式介紹",
+  "slides": [
+    {
+      "type": "title",
+      "title": "KD 技術指標",
+      "subtitle": "XQ 全球贏家  程式撰寫介紹",
+      "tagline": "從內建函數到黃金交叉選股腳本",
+      "narration": "大家好，今天我們要來介紹一個交易人最熟悉的技術指標，K D 指標，在 XQ 全球贏家中的程式撰寫方式，從內建函數、參數意義，一路講到實戰的黃金交叉選股。",
+      "subtitle_text": "大家好，今天來介紹 KD 技術指標｜在 XQ 全球贏家中的程式撰寫方式｜從內建函數、參數意義｜一路講到實戰的黃金交叉選股"
+    },
+    {
+      "type": "bullets",
+      "heading": "什麼是 KD 指標？",
+      "bullets": [
+        "又稱「隨機指標」Stochastic Oscillator",
+        "反映收盤價在近 N 日高低區間中的相對位置",
+        "K 值：較敏感的快線  ／  D 值：較平滑的慢線",
+        "數值介於 0 到 100，常用 20 與 80 為超賣 / 超買界線"
+      ],
+      "narration": "K D 指標又稱為隨機指標，英文是 Stochastic Oscillator。它用來判斷目前的收盤價，在最近 N 根 K 棒的高低區間中，是落在相對高點還是低點。K 值是較敏感的快線，D 值是較平滑的慢線，兩條線的數值都介於 0 到 100，一般會用 20 和 80 作為超賣與超買的判斷界線。",
+      "subtitle_text": "KD 指標又稱隨機指標｜英文是 Stochastic Oscillator｜判斷收盤價｜在最近 N 根 K 棒的高低區間中｜是落在相對高點還是低點｜K 值是較敏感的快線｜D 值是較平滑的慢線｜數值介於 0 到 100｜常用 20 和 80｜作為超賣與超買的界線"
+    },
+    {
+      "type": "code",
+      "heading": "XQ 內建函數：Stochastic",
+      "code": "// 當前頻率計算\nStochastic(Length, RSVt, Kt, rsv, k, _d);\n\n// 指定頻率跨週期計算\nxf_Stochastic(頻率, Length, RSVt, Kt, rsv, k, _d);",
+      "caption": "兩個核心函數：當前頻率用 Stochastic，跨頻率用 xf_Stochastic。",
+      "narration": "在 XQ 的 X S 語法中，計算 K D 的核心函數有兩個：第一個是 Stochastic，直接算出當前圖表頻率的 K D 值；第二個是 x f underscore Stochastic，可以指定頻率，例如在日線圖上直接取得週線的 K D。兩者都會把計算結果，透過最後三個參數寫回你的變數裡。",
+      "subtitle_text": "XQ 的 XS 語法中｜計算 KD 的核心函數有兩個｜第一個是 Stochastic｜算出當前圖表頻率的 KD 值｜第二個是 xf_Stochastic｜可指定頻率｜例如在日線圖上｜直接取得週線的 KD｜兩者都會把結果｜透過最後三個參數回寫變數"
+    },
+    {
+      "type": "bullets",
+      "heading": "參數說明",
+      "bullets": [
+        "Length（預設 9）：計算 RSV 的週期天數",
+        "RSVt（預設 3）：RSV 的平滑期數",
+        "Kt（預設 3）：K 值的平滑期數",
+        "輸出：rsv、k、_d 三個變數（傳址回寫）",
+        "注意：d 是保留字，要用 _d 避免衝突"
+      ],
+      "narration": "函數的參數由三個輸入與三個輸出組成。Length 是計算 R S V 的週期，預設是 9；R S V t 是 R S V 的平滑期數，K t 是 K 值的平滑期數，兩者預設都是 3。輸出的三個變數，分別會回寫 R S V、K 值、和 D 值。特別注意，因為 d 在 X S 中是保留字，我們習慣用底線 d 來當 D 值的變數名稱。",
+      "subtitle_text": "函數由三個輸入與三個輸出組成｜Length 是計算 RSV 的週期，預設 9｜RSVt 是 RSV 的平滑期數｜Kt 是 K 值的平滑期數｜兩者預設都是 3｜輸出的三個變數｜分別會回寫 RSV、K 值、D 值｜注意 d 在 XS 是保留字｜要用底線 d 當 D 值的變數名"
+    },
+    {
+      "type": "code",
+      "heading": "完整範例：自訂指標",
+      "code": "input: Length(9), RSVt(3), Kt(3);\nvariable: rsv(0), k(0), _d(0);\nSetTotalBar(maxlist(Length, 6) * 3);\nStochastic(Length, RSVt, Kt, rsv, k, _d);\nPlot1(k, \"K\");\nPlot2(_d, \"D\");",
+      "caption": "標準九、三、三日線 KD 寫法，可直接貼到 XS 編輯器當自訂指標。",
+      "narration": "這是一段完整的 K D 自訂指標範例。input 宣告三個可調參數，variable 宣告回寫用的變數。SetTotalBar 是為了保證有足夠的歷史資料讓指標收斂。呼叫 Stochastic 之後，k 和底線 d 就拿到了當前的 K D 值，最後用 Plot 1 和 Plot 2 畫在副圖上。這段程式可以直接貼到 X S 編輯器裡當作自訂指標使用。",
+      "subtitle_text": "這是完整的 KD 自訂指標範例｜input 宣告三個可調參數｜variable 宣告回寫用的變數｜SetTotalBar 保證有足夠歷史資料｜讓指標收斂｜呼叫 Stochastic 之後｜k 和 _d 就拿到當前 KD 值｜最後用 Plot1 和 Plot2 畫在副圖｜可直接貼到 XS 編輯器使用"
+    },
+    {
+      "type": "code",
+      "heading": "黃金交叉 / 死亡交叉",
+      "code": "// 黃金交叉：K 由下往上穿越 D\ncondition1 = k cross above _d;\n\n// 死亡交叉：K 由上往下跌破 D\ncondition2 = k cross below _d;\n\n// 低檔黃金交叉更可靠\nif condition1 and k < 20 then ret = 1;",
+      "caption": "cross above / cross below 是 XS 內建的穿越判斷。",
+      "narration": "要抓 K D 交叉訊號，X S 提供了 cross above 和 cross below 兩個很直觀的語法。K 由下往上穿越 D 就是黃金交叉，可視為買進訊號；由上往下跌破就是死亡交叉，視為賣出訊號。實務上建議再加上位階條件，例如 K 值小於 20 的低檔黃金交叉，勝率會更高。",
+      "subtitle_text": "要抓 KD 交叉訊號｜XS 提供 cross above 與 cross below｜兩個很直觀的語法｜K 由下往上穿越 D｜是黃金交叉，買進訊號｜由上往下跌破｜是死亡交叉，賣出訊號｜實務上建議加上位階條件｜例如 K 值小於 20 的低檔黃金交叉｜勝率會更高"
+    },
+    {
+      "type": "bullets",
+      "heading": "實戰應用技巧",
+      "bullets": [
+        "取歷史值：k[1] 是前一根、k[2] 是前兩根",
+        "跨週期：xf_Stochastic(\"W\", 9, 3, 3, ...) 取週 KD",
+        "日週雙 KD 同時黃金交叉，短線勝率更高",
+        "選股腳本：Ret = condition1; 即可納入選股結果"
+      ],
+      "narration": "幾個進階技巧分享給大家。第一，要取過去的 K 值或 D 值，用中括號加上回溯數字，k 中括號 1 就是前一根的 K 值。第二，搭配 x f underscore Stochastic 的頻率參數，你可以同時取得日 K D 與週 K D，實作「日週雙 K D 共振」策略。第三，只要把條件指派給 Ret，這段邏輯就能直接用在 XQ 的選股腳本裡，快速掃出所有符合條件的股票。",
+      "subtitle_text": "幾個進階技巧分享給大家｜第一，取過去的 K 值或 D 值｜用中括號加回溯數字｜k[1] 就是前一根的 K 值｜第二，搭配 xf_Stochastic 的頻率參數｜可同時取得日 KD 與週 KD｜實作日週雙 KD 共振策略｜第三，把條件指派給 Ret｜這段邏輯就能用在選股腳本｜快速掃出符合條件的股票"
+    },
+    {
+      "type": "closing",
+      "heading": "本集重點回顧",
+      "bullets": [
+        "Stochastic ／ xf_Stochastic 兩個核心函數",
+        "三輸入、三輸出的呼叫模式",
+        "cross above / cross below 抓交叉",
+        "k[1]、_d[1] 存取歷史值做更精準判斷"
+      ],
+      "tagline": "下集見！",
+      "narration": "今天的重點有四個：一、K D 的兩個核心函數；二、三輸入、三輸出的呼叫方式；三、cross above、cross below 抓交叉；四、中括號存取歷史值。學會這幾招，就能開始撰寫屬於你自己的 K D 策略了。我們下集見。",
+      "subtitle_text": "今天的重點有四個｜一、KD 的兩個核心函數｜二、三輸入、三輸出的呼叫方式｜三、cross above / cross below 抓交叉｜四、中括號存取歷史值｜學會這幾招｜就能開始撰寫｜屬於你自己的 KD 策略｜我們下集見"
+    }
+  ]
+}

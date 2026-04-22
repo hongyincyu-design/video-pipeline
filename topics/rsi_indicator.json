@@ -1,0 +1,86 @@
+{
+  "title": "RSI 相對強弱指標",
+  "subtitle": "XQ 全球贏家  程式撰寫介紹",
+  "voice": "zh-TW-HsiaoChenNeural",
+  "rate": "+10%",
+  "output_name": "RSI相對強弱指標_XQ程式介紹",
+  "slides": [
+    {
+      "type": "title",
+      "title": "RSI 相對強弱指標",
+      "subtitle": "XQ 全球贏家  程式撰寫介紹",
+      "tagline": "從計算原理到快慢線交叉選股策略",
+      "narration": "大家好，今天要介紹的是 R S I，相對強弱指標，在 XQ 全球贏家中的程式撰寫方式，從計算原理、內建函數，一路講到快慢線交叉的實戰選股策略。",
+      "subtitle_text": "大家好，今天來介紹 RSI 相對強弱指標｜在 XQ 全球贏家中的程式撰寫方式｜從計算原理、內建函數｜一路講到快慢線交叉的實戰選股策略"
+    },
+    {
+      "type": "bullets",
+      "heading": "什麼是 RSI 指標？",
+      "bullets": [
+        "1978 年  Welles Wilder Jr.  發明的動量震盪指標",
+        "衡量近 N 日「漲幅平均」與「跌幅平均」的相對強弱",
+        "數值介於 0 到 100，預設週期 14 日",
+        "超買界線：70（或 80）；超賣界線：30（或 20）"
+      ],
+      "narration": "R S I 是 Relative Strength Index 的縮寫，由 Welles Wilder Jr. 在 1978 年發明。它的概念是：比較最近 N 日裡，平均上漲幅度與平均下跌幅度的強弱比例。數值在 0 到 100 之間，預設週期是 14 日。一般以 70 以上視為超買、30 以下視為超賣，波動大的市場則常改用 80 與 20 當界線。",
+      "subtitle_text": "RSI 是 Relative Strength Index｜由 Welles Wilder Jr. 在 1978 年發明｜比較近 N 日平均漲幅與跌幅的強弱比例｜數值介於 0 到 100｜預設週期 14 日｜70 以上為超買｜30 以下為超賣｜波動大的市場｜改用 80 與 20 當界線"
+    },
+    {
+      "type": "code",
+      "heading": "RSI 的計算公式",
+      "code": "上漲平均 = N 日內上漲幅度總和 ÷ N\n下跌平均 = N 日內下跌幅度總和 ÷ N\n\nRS  = 上漲平均 ÷ 下跌平均\nRSI = RS ÷ (1 + RS) × 100\n    = 上漲平均 ÷ (上漲平均 + 下跌平均) × 100",
+      "caption": "數值越高代表近期買盤越強；越低代表賣盤越強。",
+      "narration": "R S I 的公式分兩步。第一步算出 R S，也就是 N 日平均上漲幅度除以平均下跌幅度。第二步把 R S 代入轉換公式，讓結果壓縮在 0 到 100 之間，就得到 R S I。數值越高代表近期買盤越強，越低代表賣盤越強。這個公式在 XQ 裡都已封裝好，一行函數就能呼叫。",
+      "subtitle_text": "RSI 的公式分兩步｜第一步算出 RS｜= 平均上漲幅度 ÷ 平均下跌幅度｜第二步代入轉換公式｜把結果壓縮在 0 到 100 之間｜就得到 RSI｜數值越高代表買盤越強｜越低代表賣盤越強｜XQ 裡已封裝好｜一行函數就能呼叫"
+    },
+    {
+      "type": "code",
+      "heading": "XQ 內建函數：RSI",
+      "code": "// 函數原型\n回傳值 = RSI(數列, 期數)\n\n// 範例：6 日 RSI\nvalue1 = RSI(Close, 6);\n\n// 跨頻率：在日線圖取週線 RSI\nvalue2 = xf_RSI(\"W\", GetField(\"Close\",\"W\"), 6);",
+      "caption": "RSI 直接回傳數值，不需要傳址回寫，比 Stochastic 更簡潔。",
+      "narration": "X Q 的 R S I 函數非常簡潔，直接回傳數值。傳入兩個參數：第一個是價格數列，通常用 Close；第二個是計算週期。如果需要跨頻率，例如在日線圖上取週線的 R S I，就改用 x f underscore R S I，搭配 Get Field 取得對應頻率的收盤價序列即可。",
+      "subtitle_text": "XQ 的 RSI 函數非常簡潔｜直接回傳數值｜傳入兩個參數｜第一個是價格數列，通常用 Close｜第二個是計算週期｜需要跨頻率時｜例如在日線圖取週線 RSI｜改用 xf_RSI｜搭配 GetField 取得對應頻率的收盤價"
+    },
+    {
+      "type": "code",
+      "heading": "完整範例：快慢線自訂指標",
+      "code": "input: FastLen(6), SlowLen(12);\nvariable: rsi6(0), rsi12(0);\nrsi6  = RSI(Close, FastLen);\nrsi12 = RSI(Close, SlowLen);\nPlot1(rsi6,  \"RSI快線\");\nPlot2(rsi12, \"RSI慢線\");\nPlot3(70, \"超買線\");\nPlot4(30, \"超賣線\");",
+      "caption": "同時畫出快線（6日）與慢線（12日），搭配 70/30 界線一目瞭然。",
+      "narration": "這是完整的快慢線 R S I 自訂指標。input 宣告快線週期 6 和慢線週期 12 兩個可調參數。分別呼叫 R S I 函數算出兩條線，再用 Plot 畫到副圖上。額外加上 70 和 30 的水平參考線，方便直接在圖上判斷超買超賣的位置。這段程式貼到 X S 編輯器就能立即使用。",
+      "subtitle_text": "完整的快慢線 RSI 自訂指標｜input 宣告快線週期 6｜慢線週期 12 兩個可調參數｜分別呼叫 RSI 函數算出兩條線｜用 Plot 畫到副圖上｜額外加上 70 和 30 的水平參考線｜方便判斷超買超賣位置｜貼到 XS 編輯器就能立即使用"
+    },
+    {
+      "type": "code",
+      "heading": "快慢線交叉選股策略",
+      "code": "// 快線由下往上穿越慢線 = 黃金交叉\nif rsi6 cross above rsi12\nthen ret = 1;\n\n// 加上超賣位階：更可靠的低檔買進訊號\nif rsi6 cross above rsi12\n   and rsi6 < 50\nthen ret = 1;",
+      "caption": "cross above / cross below 是 XS 內建的穿越判斷語法。",
+      "narration": "快慢線交叉策略的邏輯是：當 6 日 R S I 由下往上穿越 12 日 R S I 時，代表短期動能開始強過中期，這是黃金交叉訊號。用 X S 的 cross above 語法可以直接捕捉這個穿越時刻。實務上再加一個條件，要求 R S I 快線還在 50 以下，也就是從相對弱勢區翻身的訊號，勝率通常更高。把條件指派給 Ret，就能用選股腳本掃出全市場的候選標的。",
+      "subtitle_text": "快慢線交叉策略｜當 6 日 RSI 由下往上穿越 12 日 RSI｜代表短期動能開始強過中期｜這是黃金交叉訊號｜用 cross above 語法捕捉穿越時刻｜加上 RSI 快線在 50 以下的條件｜也就是從弱勢區翻身的訊號｜勝率通常更高｜指派給 Ret｜用選股腳本掃出候選標的"
+    },
+    {
+      "type": "bullets",
+      "heading": "實戰應用技巧",
+      "bullets": [
+        "取歷史值：rsi6[1] 是前一根的 RSI 值",
+        "背離訊號：股價創新高但 RSI 不創高 → 頂背離警訊",
+        "鈍化現象：RSI 長期卡在高檔，趨勢強時不宜逆勢放空",
+        "搭配 KD：RSI 超賣 + KD 低檔黃金交叉，共振更可靠"
+      ],
+      "narration": "幾個實戰技巧。第一，用中括號取歷史值，r s i 6 中括號 1 代表前一根的數值，可以用來判斷 R S I 是否在回升。第二，背離訊號：當股價創新高但 R S I 不創高，稱為頂背離，是行情可能反轉的警訊。第三，R S I 在強趨勢中會長期維持高位，這叫鈍化，此時不宜逆勢操作。第四，R S I 超賣搭配 K D 黃金交叉，雙指標共振的訊號可靠性更高。",
+      "subtitle_text": "幾個實戰技巧｜第一，rsi6[1] 代表前一根的 RSI 值｜可判斷是否在回升｜第二，背離訊號｜股價創新高但 RSI 不創高｜稱為頂背離｜是反轉警訊｜第三，強趨勢中 RSI 長期高位｜稱為鈍化｜不宜逆勢操作｜第四，RSI 超賣 + KD 黃金交叉｜雙指標共振訊號更可靠"
+    },
+    {
+      "type": "closing",
+      "heading": "本集重點回顧",
+      "bullets": [
+        "RSI 函數：RSI(Close, 期數)，直接回傳數值",
+        "跨頻率：xf_RSI 搭配 GetField 取指定週期",
+        "快慢線黃金交叉：cross above 語法一行搞定",
+        "背離、鈍化是進階用法，超賣 + 黃金交叉共振效果最佳"
+      ],
+      "tagline": "下集見！",
+      "narration": "今天的重點有四個：一、R S I 函數語法，直接回傳數值，非常簡潔；二、跨頻率用 x f underscore R S I 搭配 Get Field；三、快慢線黃金交叉用 cross above 一行搞定；四、背離和鈍化是進階用法，超賣加上黃金交叉共振效果最好。我們下集見。",
+      "subtitle_text": "今天的重點有四個｜一、RSI 函數直接回傳數值，非常簡潔｜二、跨頻率用 xf_RSI 搭配 GetField｜三、快慢線黃金交叉｜cross above 一行搞定｜四、背離和鈍化是進階用法｜超賣加上黃金交叉共振效果最好｜我們下集見"
+    }
+  ]
+}

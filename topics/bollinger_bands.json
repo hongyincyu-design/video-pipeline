@@ -1,0 +1,86 @@
+{
+  "title": "布林通道",
+  "subtitle": "XQ 全球贏家  程式撰寫介紹",
+  "voice": "zh-TW-HsiaoChenNeural",
+  "rate": "+10%",
+  "output_name": "布林通道_XQ程式介紹",
+  "slides": [
+    {
+      "type": "title",
+      "title": "布林通道",
+      "subtitle": "XQ 全球贏家  程式撰寫介紹",
+      "tagline": "用標準差抓壓力支撐，用帶寬收縮預測突破",
+      "narration": "大家好，今天介紹另一個經典的技術指標，布林通道，Bollinger Bands，在 XQ 全球贏家中的程式撰寫方式，從原理、公式到通道收縮選股策略。",
+      "subtitle_text": "大家好，今天介紹布林通道｜Bollinger Bands｜在 XQ 全球贏家中的程式撰寫方式｜從原理、公式｜到通道收縮選股策略"
+    },
+    {
+      "type": "bullets",
+      "heading": "什麼是布林通道？",
+      "bullets": [
+        "1980 年代  John Bollinger  發明的技術指標",
+        "結合「移動平均」與「標準差」兩個概念",
+        "畫出三條線：上軌、中軌、下軌",
+        "股價約有 95% 機率落在上下軌之間（2 倍標準差）"
+      ],
+      "narration": "布林通道是 John Bollinger 在 1980 年代發明的指標。核心觀念是：股價的波動接近常態分佈。它結合移動平均與標準差，在圖上畫出上軌、中軌、下軌三條線。根據統計學，股價大約有 95% 的機率會落在上下軌之間，也就是正負兩個標準差的範圍。",
+      "subtitle_text": "布林通道是 John Bollinger 在 1980 年代發明｜核心觀念：股價波動接近常態分佈｜結合移動平均與標準差｜畫出上軌、中軌、下軌三條線｜股價約 95% 機率｜落在上下軌之間｜也就是正負兩個標準差"
+    },
+    {
+      "type": "code",
+      "heading": "三條軌道的計算公式",
+      "code": "中軌 = Average(Close, 20)         // N 日簡單移動平均\n上軌 = 中軌 + 2 × StandardDev(Close, 20)\n下軌 = 中軌 - 2 × StandardDev(Close, 20)",
+      "caption": "預設 20 日週期、2 倍標準差；參數可依商品波動度調整。",
+      "narration": "三條軌道的公式很直覺。中軌是 N 日簡單移動平均，通常取 20 日。上軌等於中軌加上 2 倍的標準差，下軌等於中軌減去 2 倍的標準差。這兩個參數，週期和標準差倍數，可以依商品的波動特性調整，例如波動大的商品可以拉大到 25 日或 2.5 倍標準差。",
+      "subtitle_text": "三條軌道的公式很直覺｜中軌 = N 日簡單移動平均｜通常取 20 日｜上軌 = 中軌 + 2 倍標準差｜下軌 = 中軌 - 2 倍標準差｜週期與標準差倍數可調整｜波動大的商品｜可拉大到 25 日或 2.5 倍"
+    },
+    {
+      "type": "code",
+      "heading": "XQ 內建函數：BollingerBand",
+      "code": "// 函數原型\nBollingerBand(price, length, _band)\n\n// 等同於\n= Average(price, length) + _band * StandardDev(price, length, 1)",
+      "caption": "_band 為正 → 上軌；_band 為負 → 下軌；除以 2 得中軌。",
+      "narration": "XQ 提供了內建函數 BollingerBand，一個函數就能算出上軌或下軌。它吃三個參數：價格序列、週期、還有一個叫 band 的倍數。這個 band 給正值就會算出上軌，給負值就會算出下軌。把上軌加下軌除以二，就得到中軌。",
+      "subtitle_text": "XQ 提供內建函數 BollingerBand｜一個函數算出上軌或下軌｜吃三個參數｜價格序列、週期、band 倍數｜band 給正值｜算出上軌｜給負值｜算出下軌｜上軌加下軌除以二｜得到中軌"
+    },
+    {
+      "type": "code",
+      "heading": "完整範例：自訂指標",
+      "code": "input: Length(20), UpperBand(2), LowerBand(2);\nvariable: up(0), down(0), mid(0);\nup   = BollingerBand(Close, Length, UpperBand);\ndown = BollingerBand(Close, Length, -1 * LowerBand);\nmid  = (up + down) / 2;\nPlot1(up, \"上軌\"); Plot2(mid, \"中軌\"); Plot3(down, \"下軌\");",
+      "caption": "把這段貼到 XS 編輯器即可畫出完整布林通道。",
+      "narration": "這是完整的布林通道自訂指標。input 宣告三個可調參數，variable 宣告三個回寫變數。算上軌時 band 傳 UpperBand 正值，算下軌時乘以負一。中軌直接把上下軌平均。最後用 Plot 1 到 Plot 3 把三條線畫到主圖上。這段程式可以直接貼到 XS 編輯器當自訂指標使用。",
+      "subtitle_text": "完整的布林通道自訂指標｜input 宣告三個可調參數｜variable 宣告三個回寫變數｜算上軌時 band 傳正值｜算下軌時乘以負一｜中軌直接平均上下軌｜用 Plot1 到 Plot3｜把三條線畫到主圖｜可直接貼到 XS 編輯器使用"
+    },
+    {
+      "type": "code",
+      "heading": "通道收縮選股策略",
+      "code": "// 連續 5 日上軌下降、下軌上升 = 帶寬收縮\nif trueall(up < up[1], 5)\n   and trueall(down > down[1], 5)\nthen ret = 1;",
+      "caption": "trueall(條件, N) 要求條件在最近 N 根 K 棒全部成立。",
+      "narration": "布林通道最實用的策略之一，是「帶寬收縮」選股。帶寬收縮代表市場波動變小，常常是下一波大行情前的寧靜。XS 提供的 trueall 函數，要求條件在最近 N 根 K 棒全部成立。這段腳本的意思是：連續 5 根 K 棒，上軌都在下降、下軌都在上升，就代表通道正在收縮，把這條件指派給 Ret，就可以用選股腳本掃出候選清單。",
+      "subtitle_text": "布林通道最實用的策略｜帶寬收縮選股｜帶寬收縮代表波動變小｜常是下一波行情前的寧靜｜XS 的 trueall 函數｜要求條件在最近 N 根 K 棒全部成立｜連續 5 根 K 棒｜上軌下降、下軌上升｜就是通道收縮｜指派給 Ret｜用選股腳本掃出"
+    },
+    {
+      "type": "bullets",
+      "heading": "實戰應用技巧",
+      "bullets": [
+        "上下軌觸及：短期超買 / 超賣，不宜追高殺低",
+        "帶寬極度收縮：預告突破行情，準備方向跟進",
+        "中軌走平：盤整區間震盪；中軌陡峭：趨勢確立",
+        "%B = (Close - 下軌) / (上軌 - 下軌)，量化相對位置"
+      ],
+      "narration": "四個實戰應用技巧。第一，股價觸及上下軌時，屬於短期超買或超賣，不適合追高殺低。第二，當帶寬極度收縮，常常預告下一波突破行情。第三，中軌走平表示盤整，中軌陡峭表示趨勢確立。第四，可以計算 B percent 指標，把目前股價量化為 0 到 1 之間的相對位置。",
+      "subtitle_text": "四個實戰應用技巧｜股價觸及上下軌｜是短期超買或超賣｜不適合追高殺低｜帶寬極度收縮｜預告下一波突破｜中軌走平＝盤整｜中軌陡峭＝趨勢確立｜%B 指標｜把股價量化為 0 到 1 的相對位置"
+    },
+    {
+      "type": "closing",
+      "heading": "本集重點回顧",
+      "bullets": [
+        "BollingerBand 函數：一個函數搞定上下軌",
+        "三輸入：價格、週期、band 倍數（正上負下）",
+        "中軌 = 上下軌平均；帶寬 = 上軌減下軌",
+        "帶寬收縮 + trueall 函數是最實用選股組合"
+      ],
+      "tagline": "下集見！",
+      "narration": "今天的重點回顧：第一，BollingerBand 函數一個搞定上下軌；第二，三個輸入參數：價格、週期、band 倍數，正值算上軌、負值算下軌；第三，中軌就是上下軌平均，帶寬就是上軌減下軌；第四，帶寬收縮搭配 trueall 函數，是最實用的選股組合。我們下集見。",
+      "subtitle_text": "今天的重點回顧｜一、BollingerBand 函數｜一個搞定上下軌｜二、三個輸入參數｜價格、週期、band 倍數｜正值算上軌、負值算下軌｜三、中軌＝上下軌平均｜帶寬＝上軌減下軌｜四、帶寬收縮搭配 trueall｜是最實用選股組合｜我們下集見"
+    }
+  ]
+}
